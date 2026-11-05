@@ -1,0 +1,24 @@
+{
+  "name": "Latent Space",
+  "description": "Ted Qu 的个人站：AI 应用、工程实践与技术思考。",
+  "url": "https://tedqu.cc",
+  "locale": "zh-CN",
+  "author": {
+    "name": "Ted Qu",
+    "githubUsername": "tedqu",
+    "githubUrl": "https://github.com/tedqu",
+    "education": "PolyU · 香港理工大学校友"
+  },
+  "repository": {
+    "name": "latent-space",
+    "url": "https://github.com/tedqu/latent-space",
+    "branch": "main"
+  },
+  "plannedNavigation": [
+    { "label": "作品", "labelEn": "Projects", "path": "/projects" },
+    { "label": "实验", "labelEn": "Lab", "path": "/lab" },
+    { "label": "思考", "labelEn": "Writing", "path": "/writing" },
+    { "label": "观察", "labelEn": "Radar", "path": "/radar" },
+    { "label": "关于", "labelEn": "About", "path": "/about" }
+  ]
+}
