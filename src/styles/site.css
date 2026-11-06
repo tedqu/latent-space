@@ -292,20 +292,6 @@ figure {
 .hero-about {
   font-size: 14px;
 }
-.hero-byline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--quiet);
-  font-size: 12px;
-  margin-top: 30px;
-}
-.hero-byline a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--mono);
-}
 .atlas {
   min-width: 0;
 }
@@ -838,9 +824,6 @@ body:has(#search-dialog[open]) {
   .hero-description {
     font-size: 16px;
   }
-  .hero-byline {
-    margin-top: 20px;
-  }
   .hero-actions {
     margin-top: 20px;
   }
@@ -926,10 +909,6 @@ body:has(#search-dialog[open]) {
     gap: 9px;
     padding: 8px 12px;
   }
-  .hero-byline {
-    margin-top: 19px;
-    font-size: 11px;
-  }
   .atlas-caption {
     font-size: 8px;
     top: 9px;
@@ -986,9 +965,6 @@ body:has(#search-dialog[open]) {
   .hero-actions {
     margin-top: 16px;
     gap: 22px;
-  }
-  .hero-byline {
-    margin-top: 16px;
   }
   .hero-about,
   .button-primary {

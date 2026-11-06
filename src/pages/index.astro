@@ -4,7 +4,6 @@ import Icon from "../components/Icon.astro";
 import ResearchAtlas from "../components/ResearchAtlas.astro";
 import QuestionCard from "../components/QuestionCard.astro";
 import { getQuestions } from "../lib/journal";
-import config from "../../site.config.json";
 const questions = await getQuestions();
 const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
 ---
@@ -37,11 +36,6 @@ const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
           关于 Ted <Icon name="diagonal" size={14} />
         </a>
       </div>
-      <p class="hero-byline">
-        <a href={config.author.githubUrl}>
-          GitHub <Icon name="diagonal" size={12} />
-        </a>
-      </p>
     </div>
     <ResearchAtlas questions={questions} />
   </section>
