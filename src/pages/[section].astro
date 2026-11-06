@@ -1,7 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
-import { getQuestions, sections } from "../lib/journal";
+import SignalList from "../components/SignalList.astro";
+import { getQuestions, getSignals, sections } from "../lib/journal";
 export function getStaticPaths() {
   return Object.entries(sections).map(([section, item]) => ({
     params: { section },
@@ -9,9 +10,9 @@ export function getStaticPaths() {
   }));
 }
 const { item } = Astro.props;
-const related = (await getQuestions()).filter((q) =>
-  item.related.includes(q.id),
-);
+const signals = Astro.params.section === "signals" ? await getSignals() : [];
+const questionIds = signals.length ? signals.map((s) => s.data.question.id) : item.related;
+const related = (await getQuestions()).filter((q) => questionIds.includes(q.id));
 ---
 
 <Layout title={item.title}>
@@ -26,7 +27,12 @@ const related = (await getQuestions()).filter((q) =>
     </h1>
     <p>{item.intro}</p>
   </header>
-  <div class="archive-panel">
+  {signals.length > 0 ? (
+    <section aria-label="资料观察">
+      <p class="count">已收录 {signals.length} {item.unit}</p>
+      <SignalList signals={signals} />
+    </section>
+  ) : <div class="archive-panel">
     <div class="archive-symbol" aria-hidden="true">
       <span></span>
       <span></span>
@@ -34,7 +40,7 @@ const related = (await getQuestions()).filter((q) =>
     </div>
     <h2>{item.empty}</h2>
     <p>已收录 0 {item.unit}</p>
-  </div>
+  </div>}
   <section class="related-section">
     <h2>相关研究问题</h2>
     <div class="question-list">

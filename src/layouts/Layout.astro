@@ -4,7 +4,7 @@ import "@fontsource/instrument-serif/latin-400-italic.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "../styles/site.css";
 import config from "../../site.config.json";
-import { getQuestions } from "../lib/journal";
+import { getQuestions, getSignals } from "../lib/journal";
 import Icon from "../components/Icon.astro";
 import Mark from "../components/Mark.astro";
 
@@ -21,6 +21,7 @@ const nav = [
 const matches = (path: string) =>
   path === "/" ? current === "/" : current.startsWith(path);
 const questions = await getQuestions();
+const signals = await getSignals();
 ---
 
 <!doctype html>
@@ -120,8 +121,8 @@ const questions = await getQuestions();
         <input
           id="search-query"
           type="search"
-          placeholder="搜索问题、主题或栏目"
-          aria-label="搜索问题、主题或栏目"
+          placeholder="搜索研究问题、资料或栏目"
+          aria-label="搜索研究问题、资料或栏目"
           autocomplete="off"
         />
         <button class="icon-btn" id="close-search" aria-label="关闭搜索">
@@ -145,6 +146,13 @@ const questions = await getQuestions();
           >
             <small>{q.id}</small>
             <span>{q.title}</span>
+            <Icon name="arrow" size={15} />
+          </a>
+        ))}
+        {signals.map(({ url, data }) => (
+          <a href={url} data-terms={["观察", data.title, data.summary, data.question.id, data.source.title, data.source.publisher, data.source.author].join(" ")}>
+            <small>观察</small>
+            <span>{data.title}</span>
             <Icon name="arrow" size={15} />
           </a>
         ))}
@@ -183,7 +191,7 @@ const questions = await getQuestions();
         count.textContent = visible
           ? words.length
             ? visible + " 项结果"
-            : "研究问题与栏目"
+            : "研究问题、资料与栏目"
           : "没有匹配项，试试「世界模型」或「商业」。";
       }
       function openSearch() {

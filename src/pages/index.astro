@@ -3,8 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import ResearchAtlas from "../components/ResearchAtlas.astro";
 import QuestionCard from "../components/QuestionCard.astro";
-import { getQuestions } from "../lib/journal";
+import SignalList from "../components/SignalList.astro";
+import { getQuestions, getSignals } from "../lib/journal";
 const questions = await getQuestions();
+const recent = (await getSignals()).slice(0, 3);
 const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
 ---
 
@@ -57,6 +59,15 @@ const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
       ))}
     </div>
   </section>
+  {recent.length > 0 && (
+    <section class="reading-section" aria-labelledby="signals-title">
+      <div class="section-heading">
+        <h2 id="signals-title">最近收录</h2>
+        <a class="all-link" href="/signals/">全部观察 <Icon name="arrow" size={16} /></a>
+      </div>
+      <SignalList signals={recent} />
+    </section>
+  )}
   <section class="reading-section" aria-labelledby="reading-title">
     <div class="section-heading">
       <div>

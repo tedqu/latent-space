@@ -13,6 +13,19 @@ export async function getQuestions() {
 
 export type Question = Awaited<ReturnType<typeof getQuestions>>[number];
 
+export async function getSignals() {
+  const entries = await getCollection("signals");
+  return entries
+    .map((entry) => ({ ...entry, url: `/signals/${entry.id}/` }))
+    .sort((a, b) =>
+      b.data.published.localeCompare(a.data.published) ||
+      b.data.source.date.localeCompare(a.data.source.date) ||
+      a.id.localeCompare(b.id)
+    );
+}
+
+export type Signal = Awaited<ReturnType<typeof getSignals>>[number];
+
 export const sections = {
   perspectives: {
     title: "观点",

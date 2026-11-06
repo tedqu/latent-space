@@ -1,5 +1,5 @@
-import { defineCollection } from "astro:content";
-import { file } from "astro/loaders";
+import { defineCollection, reference } from "astro:content";
+import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 
 const questions = defineCollection({
@@ -15,4 +15,27 @@ const questions = defineCollection({
   }),
 });
 
-export const collections = { questions };
+const signals = defineCollection({
+  loader: glob({ base: "./src/content/signals", pattern: "**/*.md" }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    question: reference("questions"),
+    published: z.iso.date(),
+    source: z.object({
+      title: z.string(),
+      author: z.string(),
+      publisher: z.string(),
+      date: z.iso.date(),
+      type: z.enum(["研究团队发布", "期刊论文"]),
+      url: z.url({ protocol: /^https$/ }),
+      locator: z.string(),
+      openCopy: z.object({
+        label: z.string(),
+        url: z.url({ protocol: /^https$/ }),
+      }).optional(),
+    }),
+  }),
+});
+
+export const collections = { questions, signals };

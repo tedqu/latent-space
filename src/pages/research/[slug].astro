@@ -1,12 +1,14 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Icon from "../../components/Icon.astro";
-import { getQuestions } from "../../lib/journal";
+import SignalList from "../../components/SignalList.astro";
+import { getQuestions, getSignals } from "../../lib/journal";
 export async function getStaticPaths() {
   const questions = await getQuestions();
   return questions.map((q) => ({ params: { slug: q.slug }, props: { q } }));
 }
 const { q } = Astro.props;
+const signals = (await getSignals()).filter((s) => s.data.question.id === q.id);
 ---
 
 <Layout title={q.title} description={q.prompt}>
@@ -43,5 +45,11 @@ const { q } = Astro.props;
         </div>
       </aside>
     </div>
+    {signals.length > 0 && (
+      <section class="related-section">
+        <h2>已收录的原始资料与批注</h2>
+        <SignalList signals={signals} />
+      </section>
+    )}
   </article>
 </Layout>

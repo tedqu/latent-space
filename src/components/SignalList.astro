@@ -1,0 +1,33 @@
+---
+import Icon from "./Icon.astro";
+import type { Signal } from "../lib/journal";
+interface Props {
+  signals: Signal[];
+}
+const { signals } = Astro.props;
+---
+
+<ul class="signal-list">
+  {signals.map(({ url, data }) => (
+    <li>
+      <a href={url}>
+        <span class="source">{data.source.publisher} · {data.source.type}</span>
+        <strong>{data.title}</strong>
+        <Icon name="arrow" size={16} />
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .signal-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  li { border-bottom: 1px solid var(--line); }
+  a { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr auto; gap: 1.25rem; align-items: center; padding: 1.05rem 0; }
+  .source { color: var(--quiet); font-size: .8rem; }
+  strong { font: 600 clamp(17px, 1.6vw, 22px)/1.55 var(--serif); }
+  a:hover strong, a:focus-visible strong { color: var(--accent); }
+  @media (max-width: 760px) {
+    a { grid-template-columns: minmax(0, 1fr) auto; gap: .25rem .75rem; }
+    .source { grid-column: 1 / -1; }
+  }
+</style>

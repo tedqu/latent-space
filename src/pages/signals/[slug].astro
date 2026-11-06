@@ -1,0 +1,55 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { getSignals } from "../../lib/journal";
+
+export async function getStaticPaths() {
+  return (await getSignals()).map((signal) => ({
+    params: { slug: signal.id },
+    props: { signal },
+  }));
+}
+const { signal } = Astro.props;
+const { title, summary, published, source, question } = signal.data;
+const related = await getEntry(question);
+if (!related) throw new Error(`观察 ${signal.id} 引用了不存在的研究问题 ${question.id}`);
+const { Content } = await render(signal);
+---
+
+<Layout title={title} description={summary}>
+  <article class="question-page signal-page">
+    <a class="back-link" href="/signals/"><Icon name="back" size={15} /> 全部观察</a>
+    <header class="page-heading">
+      <p class="eyebrow"><i class="small-bar"></i>资料观察</p>
+      <h1>{title}</h1>
+      <p>{summary}</p>
+    </header>
+    <aside class="source-note" aria-label="原始资料">
+      <p>{source.publisher} · {source.type} · 原文发表于 <time datetime={source.date}>{source.date}</time></p>
+      <a href={source.url}>{source.title} <Icon name="diagonal" size={15} /></a>
+      {source.author !== source.publisher && <p>作者 · {source.author}</p>}
+      <p>{source.locator}</p>
+      {source.openCopy && <a href={source.openCopy.url}>{source.openCopy.label} <Icon name="diagonal" size={14} /></a>}
+    </aside>
+    <div class="signal-prose"><Content /></div>
+    <footer class="note-footer">
+      <p>AI 辅助整理 · 已核对原文 · <time datetime={published}>{published}</time> 收录</p>
+      <a class="text-link" href={`/research/${related.data.slug}/`}>
+        {related.data.title} <Icon name="arrow" size={16} />
+      </a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .signal-page { max-width: 740px; }
+  .source-note { border-left: 2px solid var(--accent); padding: .2rem 1.1rem; }
+  .source-note p, .note-footer p { color: var(--quiet); font-size: .83rem; line-height: 1.8; }
+  .source-note a { display: inline-block; margin: .3rem 0; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
+  .source-note a:hover { color: var(--accent); }
+  .signal-prose :global(h2) { margin: 2rem 0 .65rem; font: 600 1.45rem/1.5 var(--serif); }
+  .signal-prose :global(p) { margin: .6rem 0; line-height: 1.95; color: var(--text); }
+  .note-footer { border-top: 1px solid var(--line); margin-top: 2rem; padding-top: 1rem; }
+  .note-footer a { margin-top: .65rem; }
+</style>
