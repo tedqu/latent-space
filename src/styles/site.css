@@ -300,20 +300,11 @@ figure {
   font-size: 12px;
   margin-top: 30px;
 }
-.hero-byline b,
-.footer-inner b {
-  font-weight: 400;
-  color: var(--quiet);
-}
 .hero-byline a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-family: var(--mono);
-}
-.author-rule {
-  width: 22px;
-  border-top: 1px solid var(--map-axis);
 }
 .atlas {
   min-width: 0;
@@ -561,10 +552,6 @@ figure {
 .footer-brand {
   font: 22px var(--display);
   gap: 6px;
-}
-.footer-inner > b,
-.footer-inner b {
-  padding: 0 4px;
 }
 .footer-inner > .text-link {
   margin-left: auto;
