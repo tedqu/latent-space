@@ -1,6 +1,6 @@
 {
   "name": "Latent Space",
-  "description": "Ted Qu 的个人站：AI 应用、工程实践与技术思考。",
+  "description": "Ted Qu 的个人研究手记，关注 AI、产品、业务、商业与组织。",
   "url": "https://tedqu.cc",
   "locale": "zh-CN",
   "author": {
@@ -15,10 +15,30 @@
     "branch": "main"
   },
   "plannedNavigation": [
-    { "label": "作品", "labelEn": "Projects", "path": "/projects" },
-    { "label": "实验", "labelEn": "Lab", "path": "/lab" },
-    { "label": "思考", "labelEn": "Writing", "path": "/writing" },
-    { "label": "观察", "labelEn": "Radar", "path": "/radar" },
-    { "label": "关于", "labelEn": "About", "path": "/about" }
+    {
+      "label": "观点",
+      "labelEn": "Perspectives",
+      "path": "/perspectives/"
+    },
+    {
+      "label": "研究",
+      "labelEn": "Research",
+      "path": "/research/"
+    },
+    {
+      "label": "观察",
+      "labelEn": "Signals",
+      "path": "/signals/"
+    },
+    {
+      "label": "实验",
+      "labelEn": "Lab",
+      "path": "/lab/"
+    },
+    {
+      "label": "关于",
+      "labelEn": "About",
+      "path": "/about/"
+    }
   ]
 }

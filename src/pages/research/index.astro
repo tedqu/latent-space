@@ -1,0 +1,85 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { getQuestions } from "../../lib/journal";
+const questions = await getQuestions();
+const lenses = ["全部", "技术", "产品", "业务", "商业", "组织"];
+---
+
+<Layout title="研究">
+  <header class="page-heading">
+    <p class="eyebrow">
+      <i class="small-bar"></i>Research
+    </p>
+    <h1>
+      研究问题<span class="period">.</span>
+    </h1>
+    <p>十个长期追踪的问题，从不同视角理解 AI 如何进入真实工作。</p>
+  </header>
+  <div class="filter-toolbar">
+    <div class="lens-filters" aria-label="按视角筛选">
+      {lenses.map((lens, i) => (
+        <button data-lens={lens} aria-pressed={i === 0 ? "true" : "false"}>
+          {lens}
+        </button>
+      ))}
+    </div>
+    <span class="count" aria-live="polite" id="question-count">
+      {questions.length} 个问题
+    </span>
+  </div>
+  <div class="question-list">
+    {questions.map((q) => (
+      <a href={q.url} data-question-lenses={q.lenses.join(" ")}>
+        <span class="question-id">{q.id}</span>
+        <div class="row-title">
+          <small>{q.group}</small>
+          <h2>{q.title}</h2>
+        </div>
+        <span class="row-lenses">{q.lenses.join(" · ")}</span>
+        <Icon name="diagonal" size={18} />
+      </a>
+    ))}
+  </div>
+  <script>
+    const filters = Array.from(
+      document.querySelectorAll<HTMLButtonElement>("[data-lens]"),
+    );
+    const rows = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-question-lenses]"),
+    );
+    function display(lens: string) {
+      const value = filters.some((b) => b.dataset.lens === lens)
+        ? lens
+        : "全部";
+      for (const button of filters)
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.lens === value),
+        );
+      let shown = 0;
+      for (const row of rows) {
+        row.hidden =
+          value !== "全部" &&
+          !row.dataset.questionLenses!.split(" ").includes(value);
+        if (!row.hidden) shown++;
+      }
+      document.querySelector("#question-count")!.textContent =
+        shown + " 个问题";
+    }
+    const sync = () =>
+      display(new URLSearchParams(location.search).get("lens") || "全部");
+    filters.forEach((button) =>
+      button.addEventListener("click", () => {
+        const value = button.dataset.lens!,
+          url = new URL(location.href);
+        if (value === "全部") url.searchParams.delete("lens");
+        else url.searchParams.set("lens", value);
+        if (url.href !== location.href) history.pushState({}, "", url);
+        display(value);
+      }),
+    );
+    addEventListener("popstate", sync);
+    sync();
+  </script>
+</Layout>

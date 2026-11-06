@@ -1,0 +1,283 @@
+---
+import "@fontsource/instrument-serif/latin-400.css";
+import "@fontsource/instrument-serif/latin-400-italic.css";
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "../styles/site.css";
+import config from "../../site.config.json";
+import { getQuestions } from "../lib/journal";
+import Icon from "../components/Icon.astro";
+import Mark from "../components/Mark.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = config.description } = Astro.props;
+const current = Astro.url.pathname;
+const nav = [
+  { label: "首页", labelEn: "Home", path: "/" },
+  ...config.plannedNavigation,
+];
+const matches = (path: string) =>
+  path === "/" ? current === "/" : current.startsWith(path);
+const questions = await getQuestions();
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title?title+' · Latent Space':'Latent Space · Ted Qu 的研究手记'}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f6ef" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      try {
+        const pref = localStorage.getItem("latent-theme");
+        document.documentElement.dataset.theme =
+          pref === "dark"
+            ? "dark"
+            : pref === "light"
+              ? "light"
+              : matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      跳至正文
+    </a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="/" aria-label="Latent Space 首页">
+          <Mark size={30} />
+          <span>Latent Space</span>
+        </a>
+        <nav id="main-nav" aria-label="主导航">
+          {nav.map((n) => (
+            <a
+              class:list={["nav-link", { active: matches(n.path) }]}
+              href={n.path}
+              aria-current={
+                matches(n.path)
+                  ? current === n.path
+                    ? "page"
+                    : "location"
+                  : undefined
+              }
+            >
+              {n.label}
+            </a>
+          ))}
+        </nav>
+        <div class="header-actions">
+          <button
+            class="icon-btn"
+            id="open-search"
+            aria-label="站内搜索"
+            title="搜索（⌘ / Ctrl + K）"
+            aria-haspopup="dialog"
+          >
+            <Icon name="search" size={19} />
+          </button>
+          <button class="icon-btn" id="theme-toggle" aria-label="切换深色主题">
+            <Icon name="moon" class="moon-icon" size={19} />
+            <Icon name="sun" class="sun-icon" size={19} />
+          </button>
+          <button
+            class="icon-btn mobile-menu"
+            id="menu-toggle"
+            aria-controls="main-nav"
+            aria-expanded="false"
+            aria-label="展开导航"
+          >
+            <Icon name="menu" class="menu-icon" />
+            <Icon name="close" class="close-icon" />
+          </button>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="shell" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <a href="/" class="footer-brand">
+          <Mark size={20} /> Latent Space
+        </a>
+        <span>
+          Ted Qu <b>·</b> PolyU 校友
+        </span>
+        <a href={config.author.githubUrl} class="text-link">
+          GitHub <Icon name="diagonal" size={13} />
+        </a>
+      </div>
+    </footer>
+    <dialog id="search-dialog" aria-label="站内搜索">
+      <div class="search-head">
+        <Icon name="search" />
+        <input
+          id="search-query"
+          type="search"
+          placeholder="搜索问题、主题或栏目"
+          aria-label="搜索问题、主题或栏目"
+          autocomplete="off"
+        />
+        <button class="icon-btn" id="close-search" aria-label="关闭搜索">
+          <Icon name="close" size={18} />
+        </button>
+      </div>
+      <p id="search-count" class="search-label" aria-live="polite"></p>
+      <div class="search-results" id="search-results">
+        {questions.map((q) => (
+          <a
+            href={q.url}
+            data-terms={[
+              q.id,
+              q.title,
+              q.topic,
+              q.group,
+              ...q.lenses,
+              q.prompt,
+              ...q.evidence,
+            ].join(" ")}
+          >
+            <small>{q.id}</small>
+            <span>{q.title}</span>
+            <Icon name="arrow" size={15} />
+          </a>
+        ))}
+        {nav.slice(1).map((n) => (
+          <a href={n.path} data-terms={[n.label, n.labelEn, ...(n.path === "/about/" ? [config.author.name, config.author.education, "GitHub"] : [])].join(" ")}>
+            <small>栏目</small>
+            <span>
+              {n.label} · {n.labelEn}
+            </span>
+            <Icon name="arrow" size={15} />
+          </a>
+        ))}
+      </div>
+    </dialog>
+    <script>
+      const dialog =
+        document.querySelector<HTMLDialogElement>("#search-dialog")!;
+      const query = document.querySelector<HTMLInputElement>("#search-query")!;
+      const searchRows = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>("[data-terms]"),
+      );
+      const count = document.querySelector("#search-count")!;
+      function filterSearch() {
+        const words = query.value
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean);
+        let visible = 0;
+        for (const row of searchRows) {
+          row.hidden = !words.every((word) =>
+            row.dataset.terms!.toLowerCase().includes(word),
+          );
+          if (!row.hidden) visible++;
+        }
+        count.textContent = visible
+          ? words.length
+            ? visible + " 项结果"
+            : "研究问题与栏目"
+          : "没有匹配项，试试「世界模型」或「商业」。";
+      }
+      function openSearch() {
+        closeMenu();
+        query.value = "";
+        filterSearch();
+        dialog.showModal();
+        query.focus();
+      }
+      document
+        .querySelector("#open-search")!
+        .addEventListener("click", openSearch);
+      document
+        .querySelector("#close-search")!
+        .addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) {
+          const r = dialog.getBoundingClientRect();
+          if (
+            e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom
+          )
+            dialog.close();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          if (dialog.open) dialog.close();
+          else openSearch();
+        }
+      });
+      query.addEventListener("input", filterSearch);
+      dialog.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !e.isComposing) {
+          e.preventDefault();
+          dialog.close();
+        }
+      });
+      query.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          searchRows.find((r) => !r.hidden)?.focus();
+        }
+      });
+      const toggle =
+        document.querySelector<HTMLButtonElement>("#theme-toggle")!;
+      function themeLabel() {
+        toggle.setAttribute(
+          "aria-label",
+          document.documentElement.dataset.theme === "dark"
+            ? "切换浅色主题"
+            : "切换深色主题",
+        );
+        toggle.title = toggle.getAttribute("aria-label")!;
+      }
+      themeLabel();
+      toggle.addEventListener("click", () => {
+        const t =
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = t;
+        try {
+          localStorage.setItem("latent-theme", t);
+        } catch {}
+        themeLabel();
+      });
+      const menu = document.querySelector<HTMLButtonElement>("#menu-toggle")!;
+      function closeMenu() {
+        menu.setAttribute("aria-expanded", "false");
+        menu.setAttribute("aria-label", "展开导航");
+        document.querySelector("#main-nav")!.classList.remove("open");
+      }
+      menu.addEventListener("click", () => {
+        if (menu.getAttribute("aria-expanded") === "true") closeMenu();
+        else {
+          menu.setAttribute("aria-expanded", "true");
+          menu.setAttribute("aria-label", "收起导航");
+          document.querySelector("#main-nav")!.classList.add("open");
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Escape" &&
+          menu.getAttribute("aria-expanded") === "true"
+        ) {
+          closeMenu();
+          menu.focus();
+        }
+      });
+      matchMedia("(min-width: 801px)").addEventListener("change", closeMenu);
+    </script>
+  </body>
+</html>

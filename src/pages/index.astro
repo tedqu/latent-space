@@ -1,0 +1,108 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import ResearchAtlas from "../components/ResearchAtlas.astro";
+import QuestionCard from "../components/QuestionCard.astro";
+import { getQuestions } from "../lib/journal";
+import config from "../../site.config.json";
+const questions = await getQuestions();
+const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
+---
+
+<Layout>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow hero-kicker">
+        <span class="star" aria-hidden="true">
+          ✳
+        </span>{" "}
+        TED QU <span class="slash">/</span> 个人研究手记
+      </p>
+      <h1 class="hero-title">
+        Latent{" "}
+        <em>
+          Space<span>.</span>
+        </em>
+      </h1>
+      <div class="hero-description">
+        从模型的能力边界，到产品、商业与组织。
+        <br class="wide-break" />
+        记录 AI 改变真实工作的方式。
+      </div>
+      <div class="hero-actions">
+        <a class="button-primary" href="/research/">
+          探索研究问题 <Icon name="arrow" size={17} />
+        </a>
+        <a class="text-link hero-about" href="/about/">
+          关于 Ted <Icon name="diagonal" size={14} />
+        </a>
+      </div>
+      <p class="hero-byline">
+        <span class="author-rule"></span>香港理工大学校友 <b>·</b>{" "}
+        <a href={config.author.githubUrl}>
+          GitHub <Icon name="diagonal" size={12} />
+        </a>
+      </p>
+    </div>
+    <ResearchAtlas questions={questions} />
+  </section>
+  <section class="featured-section" aria-labelledby="featured-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">
+          <i class="small-bar"></i> Research questions
+        </p>
+        <h2 id="featured-title">研究问题</h2>
+      </div>
+      <a class="all-link" href="/research/">
+        查看全部 {questions.length} 个问题 <Icon name="arrow" size={16} />
+      </a>
+    </div>
+    <div class="question-cards">
+      {featured.map((q) => (
+        <QuestionCard q={q} />
+      ))}
+    </div>
+  </section>
+  <section class="reading-section" aria-labelledby="reading-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">
+          <i class="small-bar"></i> Journal
+        </p>
+        <h2 id="reading-title">手记栏目</h2>
+      </div>
+    </div>
+    <div class="reading-path">
+      {[
+        {
+          href: "/perspectives/",
+          title: "观点",
+          en: "Perspectives",
+          desc: "一个判断，以及支撑它的证据。",
+        },
+        {
+          href: "/signals/",
+          title: "观察",
+          en: "Signals",
+          desc: "值得追踪的变化与一手资料。",
+        },
+        {
+          href: "/lab/",
+          title: "实验",
+          en: "Lab",
+          desc: "把开放问题放进具体的验证条件。",
+        },
+      ].map((s) => (
+        <a href={s.href}>
+          <div>
+            <strong>{s.title}</strong>
+            <em>{s.en}</em>
+          </div>
+          <p>{s.desc}</p>
+          <Icon name="diagonal" size={17} />
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

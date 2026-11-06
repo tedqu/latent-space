@@ -1,0 +1,22 @@
+---
+import Icon from "./Icon.astro";
+import QuestionArt from "./QuestionArt.astro";
+import type { Question } from "../lib/journal";
+interface Props {
+  q: Question;
+}
+const { q } = Astro.props;
+---
+
+<a class="question-card" href={q.url}>
+  <div class="card-top">
+    <span class="question-id">{q.id}</span>
+    <QuestionArt type={q.id} />
+  </div>
+  <span class="card-category">{q.group}</span>
+  <h3>{q.title}</h3>
+  <div class="card-base">
+    <span>{q.lenses.slice(0, 3).join(" · ")}</span>
+    <Icon name="diagonal" size={18} />
+  </div>
+</a>

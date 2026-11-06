@@ -1,0 +1,47 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { getQuestions } from "../../lib/journal";
+export async function getStaticPaths() {
+  const questions = await getQuestions();
+  return questions.map((q) => ({ params: { slug: q.slug }, props: { q } }));
+}
+const { q } = Astro.props;
+---
+
+<Layout title={q.title} description={q.prompt}>
+  <article class="question-page">
+    <a href="/research/" class="back-link">
+      <Icon name="back" size={15} /> 研究问题索引
+    </a>
+    <header class="page-heading">
+      <p class="eyebrow">
+        <i class="small-bar"></i>
+        {q.id} <span class="slash">/</span>
+        {q.group}
+      </p>
+      <h1>{q.title}</h1>
+      <p>{q.prompt}</p>
+    </header>
+    <div class="question-body">
+      <div>
+        <h2>值得核查的证据</h2>
+        <ul class="evidence-list">
+          {q.evidence.map((e) => (
+            <li>{e}</li>
+          ))}
+        </ul>
+      </div>
+      <aside>
+        <p class="eyebrow">研究视角</p>
+        <div class="lens-links">
+          {q.lenses.map((l) => (
+            <a href={"/research/?lens=" + encodeURIComponent(l)}>
+              {l} <Icon name="diagonal" size={12} />
+            </a>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </article>
+</Layout>
