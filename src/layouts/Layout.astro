@@ -121,8 +121,8 @@ const signals = await getSignals();
         <input
           id="search-query"
           type="search"
-          placeholder="搜索研究问题、资料或栏目"
-          aria-label="搜索研究问题、资料或栏目"
+          placeholder="搜索研究问题、洞察或原始资料"
+          aria-label="搜索研究问题、洞察或原始资料"
           autocomplete="off"
         />
         <button class="icon-btn" id="close-search" aria-label="关闭搜索">
@@ -149,9 +149,9 @@ const signals = await getSignals();
             <Icon name="arrow" size={15} />
           </a>
         ))}
-        {signals.map(({ url, data }) => (
-          <a href={url} data-terms={["观察", data.title, data.summary, data.question.id, data.source.title, data.source.publisher, data.source.author].join(" ")}>
-            <small>观察</small>
+        {signals.map(({ url, data, topic }) => (
+          <a href={url} data-terms={["洞察", topic.label, data.title, data.summary, data.question.id, data.source.title, data.source.publisher, data.source.author].join(" ")}>
+            <small>洞察</small>
             <span>{data.title}</span>
             <Icon name="arrow" size={15} />
           </a>
@@ -191,7 +191,7 @@ const signals = await getSignals();
         count.textContent = visible
           ? words.length
             ? visible + " 项结果"
-            : "研究问题、资料与栏目"
+            : "研究问题、洞察与原始资料"
           : "没有匹配项，试试「世界模型」或「商业」。";
       }
       function openSearch() {

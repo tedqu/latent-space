@@ -1,0 +1,62 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SignalList from "../../components/SignalList.astro";
+import { getSignals, insightTopics } from "../../lib/journal";
+
+const signals = await getSignals();
+const filters = [{ id: "all", label: "全部" }, ...insightTopics];
+---
+
+<Layout title="洞察" description="从论文、工程实践与市场变化出发，理解 AI 对产品、业务和组织的影响。">
+  <header class="page-heading">
+    <p class="eyebrow"><i class="small-bar"></i>Insights</p>
+    <h1>洞察<span class="period">.</span></h1>
+    <p>从一手资料出发，追问技术变化带来的产品与商业影响。</p>
+  </header>
+  <section aria-label="洞察列表">
+    <div class="filter-toolbar">
+      <div class="lens-filters" aria-label="按主题筛选洞察">
+        {filters.map((topic, index) => (
+          <button data-insight-filter={topic.id} aria-pressed={index === 0 ? "true" : "false"} aria-controls="insight-list">
+            {topic.label}
+          </button>
+        ))}
+      </div>
+      <span class="count" id="insight-count" aria-live="polite">{signals.length} 篇洞察</span>
+    </div>
+    <div id="insight-list"><SignalList signals={signals} /></div>
+    <p id="insight-empty" class="empty-insights" hidden={signals.length > 0}>这个主题还没有收录内容，先看看其他主题。</p>
+  </section>
+</Layout>
+
+<script>
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-insight-filter]"));
+  const rows = Array.from(document.querySelectorAll<HTMLElement>("#insight-list [data-insight-topic]"));
+  function display(value: string) {
+    const topic = buttons.some((button) => button.dataset.insightFilter === value) ? value : "all";
+    buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.insightFilter === topic)));
+    let count = 0;
+    rows.forEach((row) => {
+      row.hidden = topic !== "all" && row.dataset.insightTopic !== topic;
+      if (!row.hidden) count++;
+    });
+    document.querySelector("#insight-count")!.textContent = `${count} 篇洞察`;
+    document.querySelector<HTMLElement>("#insight-empty")!.hidden = count > 0;
+  }
+  const sync = () => display(new URLSearchParams(location.search).get("topic") || "all");
+  buttons.forEach((button) => button.addEventListener("click", () => {
+    const topic = button.dataset.insightFilter!;
+    const url = new URL(location.href);
+    if (topic === "all") url.searchParams.delete("topic");
+    else url.searchParams.set("topic", topic);
+    if (url.href !== location.href) history.pushState({}, "", url);
+    display(topic);
+  }));
+  addEventListener("popstate", sync);
+  sync();
+</script>
+
+<style>
+  #insight-list { margin-bottom: 3.5rem; }
+  .empty-insights { margin: 2rem 0 4rem; color: var(--quiet); }
+</style>

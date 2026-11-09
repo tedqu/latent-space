@@ -16,24 +16,14 @@
   },
   "plannedNavigation": [
     {
-      "label": "观点",
-      "labelEn": "Perspectives",
-      "path": "/perspectives/"
+      "label": "洞察",
+      "labelEn": "Insights",
+      "path": "/signals/"
     },
     {
       "label": "研究",
       "labelEn": "Research",
       "path": "/research/"
-    },
-    {
-      "label": "观察",
-      "labelEn": "Signals",
-      "path": "/signals/"
-    },
-    {
-      "label": "实验",
-      "labelEn": "Lab",
-      "path": "/lab/"
     },
     {
       "label": "关于",

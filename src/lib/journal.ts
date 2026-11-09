@@ -13,10 +13,22 @@ export async function getQuestions() {
 
 export type Question = Awaited<ReturnType<typeof getQuestions>>[number];
 
+export const insightTopics = [
+  { id: "technology", label: "前沿与工程", groups: ["能力前沿", "系统与交互", "研究转化"] },
+  { id: "product", label: "产品与业务", groups: ["产品与业务"] },
+  { id: "business", label: "商业与组织", groups: ["商业与组织"] },
+];
+
 export async function getSignals() {
   const entries = await getCollection("signals");
+  const questions = new Map((await getQuestions()).map((q) => [q.id, q]));
   return entries
-    .map((entry) => ({ ...entry, url: `/signals/${entry.id}/` }))
+    .map((entry) => {
+      const question = questions.get(entry.data.question.id);
+      const topic = insightTopics.find((t) => t.groups.includes(question?.group ?? ""));
+      if (!topic) throw new Error(`资料 ${entry.id} 缺少对应的研究主题`);
+      return { ...entry, url: `/signals/${entry.id}/`, topic };
+    })
     .sort((a, b) =>
       b.data.published.localeCompare(a.data.published) ||
       b.data.source.date.localeCompare(a.data.source.date) ||
@@ -25,30 +37,3 @@ export async function getSignals() {
 }
 
 export type Signal = Awaited<ReturnType<typeof getSignals>>[number];
-
-export const sections = {
-  perspectives: {
-    title: "观点",
-    english: "Perspectives",
-    intro: "技术、产品与组织决策中的判断、理由与适用条件。",
-    empty: "观点归档",
-    unit: "篇观点",
-    related: ["Q07", "Q08"],
-  },
-  signals: {
-    title: "观察",
-    english: "Signals",
-    intro: "沿着论文、产品变化和一手资料，追踪研究问题的新线索。",
-    empty: "观察归档",
-    unit: "条观察",
-    related: ["Q01", "Q02"],
-  },
-  lab: {
-    title: "实验",
-    english: "Lab",
-    intro: "用有明确条件的实验，检验一个具体假设。",
-    empty: "实验记录",
-    unit: "项实验",
-    related: ["Q03", "Q04"],
-  },
-};

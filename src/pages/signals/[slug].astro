@@ -19,9 +19,9 @@ const { Content } = await render(signal);
 
 <Layout title={title} description={summary}>
   <article class="question-page signal-page">
-    <a class="back-link" href="/signals/"><Icon name="back" size={15} /> 全部观察</a>
+    <a class="back-link" href="/signals/"><Icon name="back" size={15} /> 全部洞察</a>
     <header class="page-heading">
-      <p class="eyebrow"><i class="small-bar"></i>资料观察</p>
+      <p class="eyebrow"><i class="small-bar"></i>{signal.topic.label}</p>
       <h1>{title}</h1>
       <p>{summary}</p>
     </header>

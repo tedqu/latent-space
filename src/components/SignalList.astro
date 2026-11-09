@@ -8,11 +8,17 @@ const { signals } = Astro.props;
 ---
 
 <ul class="signal-list">
-  {signals.map(({ url, data }) => (
-    <li>
+  {signals.map(({ url, data, topic }) => (
+    <li data-insight-topic={topic.id}>
       <a href={url}>
-        <span class="source">{data.source.publisher} · {data.source.type}</span>
-        <strong>{data.title}</strong>
+        <span class="source">
+          <span class="topic">{topic.label}</span>
+          <span>{data.source.publisher} · {data.source.type}</span>
+        </span>
+        <span class="reading-copy">
+          <strong>{data.title}</strong>
+          <span class="summary">{data.summary}</span>
+        </span>
         <Icon name="arrow" size={16} />
       </a>
     </li>
@@ -22,12 +28,16 @@ const { signals } = Astro.props;
 <style>
   .signal-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
   li { border-bottom: 1px solid var(--line); }
-  a { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr auto; gap: 1.25rem; align-items: center; padding: 1.05rem 0; }
-  .source { color: var(--quiet); font-size: .8rem; }
+  a { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr auto; gap: 1.25rem; align-items: start; padding: 1.4rem 0; }
+  .source { display: grid; gap: .4rem; color: var(--quiet); font-size: .78rem; line-height: 1.7; padding-top: .2rem; }
+  .topic { color: var(--green); font-size: .85rem; }
+  .reading-copy { display: grid; gap: .45rem; min-width: 0; }
+  .summary { color: var(--quiet); font-size: .86rem; line-height: 1.85; }
+  a > :global(svg) { margin-top: .55rem; }
   strong { font: 600 clamp(17px, 1.6vw, 22px)/1.55 var(--serif); }
   a:hover strong, a:focus-visible strong { color: var(--accent); }
   @media (max-width: 760px) {
     a { grid-template-columns: minmax(0, 1fr) auto; gap: .25rem .75rem; }
-    .source { grid-column: 1 / -1; }
+    .source { grid-column: 1 / -1; display: flex; gap: .4rem .8rem; flex-wrap: wrap; padding-bottom: .3rem; }
   }
 </style>

@@ -6,7 +6,7 @@ import QuestionCard from "../components/QuestionCard.astro";
 import SignalList from "../components/SignalList.astro";
 import { getQuestions, getSignals } from "../lib/journal";
 const questions = await getQuestions();
-const recent = (await getSignals()).slice(0, 3);
+const recent = (await getSignals()).slice(0, 6);
 const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
 ---
 
@@ -62,51 +62,13 @@ const featured = questions.filter((q) => ["Q02", "Q06", "Q08"].includes(q.id));
   {recent.length > 0 && (
     <section class="reading-section" aria-labelledby="signals-title">
       <div class="section-heading">
-        <h2 id="signals-title">最近收录</h2>
-        <a class="all-link" href="/signals/">全部观察 <Icon name="arrow" size={16} /></a>
+        <div>
+          <p class="eyebrow"><i class="small-bar"></i> Latest insights</p>
+          <h2 id="signals-title">近期洞察</h2>
+        </div>
+        <a class="all-link" href="/signals/">全部洞察 <Icon name="arrow" size={16} /></a>
       </div>
       <SignalList signals={recent} />
     </section>
   )}
-  <section class="reading-section" aria-labelledby="reading-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">
-          <i class="small-bar"></i> Journal
-        </p>
-        <h2 id="reading-title">手记栏目</h2>
-      </div>
-    </div>
-    <div class="reading-path">
-      {[
-        {
-          href: "/perspectives/",
-          title: "观点",
-          en: "Perspectives",
-          desc: "一个判断，以及支撑它的证据。",
-        },
-        {
-          href: "/signals/",
-          title: "观察",
-          en: "Signals",
-          desc: "值得追踪的变化与一手资料。",
-        },
-        {
-          href: "/lab/",
-          title: "实验",
-          en: "Lab",
-          desc: "把开放问题放进具体的验证条件。",
-        },
-      ].map((s) => (
-        <a href={s.href}>
-          <div>
-            <strong>{s.title}</strong>
-            <em>{s.en}</em>
-          </div>
-          <p>{s.desc}</p>
-          <Icon name="diagonal" size={17} />
-        </a>
-      ))}
-    </div>
-  </section>
 </Layout>
