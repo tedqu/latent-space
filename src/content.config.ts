@@ -27,7 +27,7 @@ const signals = defineCollection({
       author: z.string(),
       publisher: z.string(),
       date: z.iso.date(),
-      type: z.enum(["研究团队发布", "期刊论文", "版本发布"]),
+      type: z.enum(["研究团队发布", "期刊论文", "版本发布", "技术文章", "预印本", "研究报告", "观点文章", "案例研究"]),
       url: z.url({ protocol: /^https$/ }),
       locator: z.string(),
       openCopy: z.object({
