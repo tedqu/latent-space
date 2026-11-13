@@ -4,6 +4,7 @@ import SignalList from "../../components/SignalList.astro";
 import { getSignals, insightTopics } from "../../lib/journal";
 
 const signals = await getSignals();
+const latestPublished = signals[0]?.data.published;
 const filters = [{ id: "all", label: "全部" }, ...insightTopics];
 ---
 
@@ -22,7 +23,10 @@ const filters = [{ id: "all", label: "全部" }, ...insightTopics];
           </button>
         ))}
       </div>
-      <span class="count" id="insight-count" aria-live="polite">{signals.length} 篇洞察</span>
+      <div class="insight-meta">
+        {latestPublished && <span class="latest-date">最近收录 <time datetime={latestPublished}>{latestPublished}</time></span>}
+        <span class="count" id="insight-count" aria-live="polite">{signals.length} 篇洞察</span>
+      </div>
     </div>
     <div id="insight-list"><SignalList signals={signals} /></div>
     <p id="insight-empty" class="empty-insights" hidden={signals.length > 0}>这个主题还没有收录内容，先看看其他主题。</p>
@@ -57,6 +61,9 @@ const filters = [{ id: "all", label: "全部" }, ...insightTopics];
 </script>
 
 <style>
+  .insight-meta { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1.25rem; color: var(--quiet); font-size: .75rem; }
+  .latest-date { white-space: nowrap; }
+  .latest-date time { font-family: var(--mono); }
   #insight-list { margin-bottom: 3.5rem; }
   .empty-insights { margin: 2rem 0 4rem; color: var(--quiet); }
 </style>

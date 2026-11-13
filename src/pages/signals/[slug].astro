@@ -23,6 +23,7 @@ const { Content } = await render(signal);
     <header class="page-heading">
       <p class="eyebrow"><i class="small-bar"></i>{signal.topic.label}</p>
       <h1>{title}</h1>
+      <div class="collected-date">本站收录于 <time datetime={published}>{published}</time></div>
       <p>{summary}</p>
     </header>
     <aside class="source-note" aria-label="原始资料">
@@ -34,7 +35,7 @@ const { Content } = await render(signal);
     </aside>
     <div class="signal-prose"><Content /></div>
     <footer class="note-footer">
-      <p>AI 辅助整理 · 已核对原文 · <time datetime={published}>{published}</time> 收录</p>
+      <p>AI 辅助整理 · 已核对原文</p>
       <a class="text-link" href={`/research/${related.data.slug}/`}>
         {related.data.title} <Icon name="arrow" size={16} />
       </a>
@@ -44,6 +45,8 @@ const { Content } = await render(signal);
 
 <style>
   .signal-page { max-width: 740px; }
+  .collected-date { margin: .8rem 0 1rem; color: var(--quiet); font-size: .78rem; }
+  .collected-date time { font-family: var(--mono); font-size: .75rem; }
   .source-note { border-left: 2px solid var(--accent); padding: .2rem 1.1rem; }
   .source-note p, .note-footer p { color: var(--quiet); font-size: .83rem; line-height: 1.8; }
   .source-note a { display: inline-block; margin: .3rem 0; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }

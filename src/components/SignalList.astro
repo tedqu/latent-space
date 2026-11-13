@@ -14,6 +14,7 @@ const { signals } = Astro.props;
         <span class="source">
           <span class="topic">{topic.label}</span>
           <span>{data.source.publisher} · {data.source.type}</span>
+          <span class="collected-date">收录于 <time datetime={data.published}>{data.published}</time></span>
         </span>
         <span class="reading-copy">
           <strong>{data.title}</strong>
@@ -31,6 +32,8 @@ const { signals } = Astro.props;
   a { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr auto; gap: 1.25rem; align-items: start; padding: 1.4rem 0; }
   .source { display: grid; gap: .4rem; color: var(--quiet); font-size: .78rem; line-height: 1.7; padding-top: .2rem; }
   .topic { color: var(--green); font-size: .85rem; }
+  .collected-date { white-space: nowrap; }
+  .collected-date time { font-family: var(--mono); font-size: .75rem; }
   .reading-copy { display: grid; gap: .45rem; min-width: 0; }
   .summary { color: var(--quiet); font-size: .86rem; line-height: 1.85; }
   a > :global(svg) { margin-top: .55rem; }
